@@ -2,11 +2,12 @@ import os
 import json
 import configparser
 import discord
+import random
 from discord.ext import commands
 from dotenv import load_dotenv
-from airtable_api import (get_record_id, get_member_data, update_discord_id, 
-                          delete_duplicate_records, delete_last_record)
-from generate_cards import generate_greeting
+from airtable_api import *
+from generate_cards import *
+from dialogflow_api import *
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -25,6 +26,7 @@ home_guild_id = int(config.get("server","home_guild_id"))
 introductions_channel_id = int(config.get("server","introductions_channel_id"))
 server_guide_channel_id = int(config.get("server","server_guide_channel_id"))
 incoming_channel_id = int(config.get("server","incoming_channel_id"))
+bot_name = str(config.get("server","bot_name"))
 
 async def greet_member(member:discord.Member, name:str, channel_id:int):
   try:
@@ -84,6 +86,16 @@ async def on_message(message):
         print(f"{str(member)} has succesfully onboarded")
     else:
       pass
+  
+  elif bot_name in [u.name for u in message.mentions]:
+    content = str(message.content).split(" ", 2)
+    res = "hmm something went wrong :("
+    if len(content) < 2:
+      res = random.choice(["👀","How can I help you?","I'm here..","Yepp"])
+    else:
+      dialogflow_res = send_message_diagflow(message.content)
+      res = dialogflow_res["response"]
+    await message.channel.send(res)
 
 @client.event
 async def on_member_join(member):
