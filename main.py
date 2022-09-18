@@ -28,6 +28,38 @@ server_guide_channel_id = int(config.get("server","server_guide_channel_id"))
 incoming_channel_id = int(config.get("server","incoming_channel_id"))
 bot_name = str(config.get("server","bot_name"))
 
+def get_config(category:str, key:str):
+  value = int(config.get(category, key))
+  return value
+
+
+college_roles = {
+                  "NSS College of Engineering": get_config("college_roles","nsscian"),
+                  "Other": get_config("college_roles","non_nsscian")
+                }
+
+gender_roles = {
+                  "He/Him": get_config("gender_roles","male"),
+                  "She/Her": get_config("gender_roles","female"),
+                  "They/Them": get_config("gender_roles","non_binary")
+                }
+
+year_roles = {
+                "2016": get_config("year_roles","2k16"),
+                "2015": get_config("year_roles","2k15"),
+                "2017": get_config("year_roles","2k17"),
+                "2018": get_config("year_roles","2k18"),
+                "2019": get_config("year_roles","2k19"),
+                "2020": get_config("year_roles","2k20"),
+                "2021": get_config("year_roles","2k21"),
+                "2022": get_config("year_roles","2k22"),
+                "2023": get_config("year_roles","2k23"),
+                "2024": get_config("year_roles","2k24"),
+                "2025": get_config("year_roles","2k25"),
+                "2026": get_config("year_roles","2k26"),
+                "2027": get_config("year_roles","2k27")
+              }
+
 async def greet_member(member:discord.Member, name:str, channel_id:int):
   try:
     await member.send(f'''Yaay 🎉 you've succesfully onboarded our server as a member
@@ -63,6 +95,9 @@ async def on_message(message):
     member_data = json.loads(message.content)
     nickname = member_data['name']
     username = member_data['discord_id']
+    college = member_data['college']
+    gender = member_data['gender']
+    year = member_data['year']
     guild = client.get_guild(home_guild_id)
     member = guild.get_member_named(username)
     if member:
@@ -76,7 +111,10 @@ async def on_message(message):
           if 'snowflake_id' not in member_data['fields'].keys():
             delete_last_record(username)
       else:
-        await member.add_roles(member_role)
+        college_role = guild.get_role(college_roles[college])
+        gender_role = guild.get_role(gender_roles[gender])
+        year_role = guild.get_role(year_roles[year])
+        await member.add_roles(member_role, college_role, gender_role, year_role)
         await member.edit(nick=f"{nickname} 🎓")
         discord_id = member.id
         record_id = get_record_id(username)
@@ -109,12 +147,18 @@ async def on_member_join(member):
   
   if member_data != None:
     nickname = member_data['fields']['name']
+    college = str(member_data['fields']['college'])
+    gender = str(member_data['fields']['pronouns'])
+    year = str(member_data['fields']['graduation_year'])
+    college_role = guild.get_role(college_roles[college])
+    gender_role = guild.get_role(gender_roles[gender])
+    year_role = guild.get_role(year_roles[year])
     if 'snowflake_id' in member_data['fields'].keys():
-      await member.add_roles(member_role)
+      await member.add_roles(member_role, college_role, gender_role, year_role)
       await member.edit(nick=f"{nickname} 🎓")
       print(f"{str(member)} has succesfully rejoined")
     else:
-      await member.add_roles(member_role)
+      await member.add_roles(member_role, college_role, gender_role, year_role)
       await member.edit(nick=f"{nickname} 🎓")
       discord_id = member.id
       record_id = get_record_id(username)
@@ -139,8 +183,6 @@ To gain access to all the channels on our server, you need to complete a few ste
     except Exception as e:
       print(e)
       print(f"Error sending DM to {str(member)}")
-
-  
 
 
 client.run(TOKEN)
