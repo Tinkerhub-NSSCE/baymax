@@ -5,6 +5,7 @@ import discord
 import random
 from discord.ext import commands
 from dotenv import load_dotenv
+from datetime import datetime
 from airtable_api import *
 from generate_cards import *
 from dialogflow_api import *
@@ -27,6 +28,9 @@ introductions_channel_id = int(config.get("server","introductions_channel_id"))
 server_guide_channel_id = int(config.get("server","server_guide_channel_id"))
 incoming_channel_id = int(config.get("server","incoming_channel_id"))
 bot_name = str(config.get("server","bot_name"))
+user_dms_channel_id = int(config.get("server","user_dms_channel_id"))
+tech_news_channel_id = int(config.get("server","tech_news_channel_id"))
+hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
 
 def get_config(category:str, key:str):
   value = int(config.get(category, key))
@@ -134,6 +138,22 @@ async def on_message(message):
       dialogflow_res = send_message_diagflow(message.content)
       res = dialogflow_res["response"]
     await message.channel.send(res)
+
+  elif message.channel.type is discord.ChannelType.private:
+    author_id = message.author.id
+    author_name = message.author.display_name
+    icon_url = message.author.avatar.replace(format='png', size=256)
+    msg_content = message.content
+    now = datetime.now()
+    time_stamp = (now.strftime("%a %b %d %Y"), now.strftime("%I:%M:%S"))
+    embed_color = 0x5865F2
+    embed = discord.Embed(description=f'''**Discord ID:**  <@{author_id}>
+**Message:**  {msg_content}''', color=discord.Colour(embed_color))
+    embed.set_author(name=author_name, icon_url=icon_url)
+    embed.set_footer(text=f"{time_stamp[0]} · {time_stamp[1]}")
+    user_dms_channel = client.get_channel(user_dms_channel_id)
+    await message.author.send("My programming limits me from having conversations in a private channel. However I've forwaded your message to the server admins so that they can give you a swift response!")
+    await user_dms_channel.send(embed=embed)
 
 @client.event
 async def on_member_join(member):
