@@ -3,7 +3,9 @@ import json
 import configparser
 import discord
 import random
-from discord.ext import commands
+import feedparser
+import xmltodict
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
 from airtable_api import *
@@ -32,10 +34,36 @@ user_dms_channel_id = int(config.get("server","user_dms_channel_id"))
 tech_news_channel_id = int(config.get("server","tech_news_channel_id"))
 hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
 
+@tasks.loop(minutes=60.0)
+async def post_hn_daily():
+  now = datetime.now()
+  if now.now().hour == 22:
+    NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
+    xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
+    data = xmltodict.parse(xmldata)
+    
+    hn_daily_channel = client.get_channel(hn_daily_channel_id)
+    history = [m async for m in hn_daily_channel.history(limit = 1)]
+    for m in history:
+          try:
+              await m.delete()
+          except:
+              pass
+
+    embed_text = ""
+    for i in range(10):
+      url = data['root']['ul'][0]['li'][i]['span'][0]['a']['@href']
+      text = data['root']['ul'][0]['li'][i]['span'][0]['a']['#text'].replace("\\","")
+      embed_text += f"***[{i+1}. {text}]({url})***\n\n"
+
+    time_stamp = now.strftime("%b %d %Y")
+    embed_color = 0x5865F2
+    embed = discord.Embed(title=f"Top 10 HackerNews | {time_stamp}", description=embed_text, color=discord.Color(embed_color))
+    await hn_daily_channel.send(embed=embed)
+
 def get_config(category:str, key:str):
   value = int(config.get(category, key))
   return value
-
 
 college_roles = {
                   "NSS College of Engineering": get_config("college_roles","nsscian"),
@@ -88,6 +116,7 @@ And if you ever feel lost and need help navigating the server do check out <#{se
 @client.event
 async def on_ready():
   print(f"Logged in as {client.user}")
+  post_hn_daily.start()
 
 @client.event
 async def on_message(message):
