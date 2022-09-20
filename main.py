@@ -5,6 +5,7 @@ import discord
 import random
 import feedparser
 import xmltodict
+import requests
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
@@ -37,7 +38,7 @@ hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
 @tasks.loop(minutes=60.0)
 async def post_hn_daily():
   now = datetime.now()
-  if now.now().hour == 22:
+  if now.hour == 7:
     NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
     xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
     data = xmltodict.parse(xmldata)
@@ -60,6 +61,33 @@ async def post_hn_daily():
     embed_color = 0x5865F2
     embed = discord.Embed(title=f"Top 10 HackerNews | {time_stamp}", description=embed_text, color=discord.Color(embed_color))
     await hn_daily_channel.send(embed=embed)
+
+@tasks.loop(minutes=60.0)
+async def post_tech_news():
+  now = datetime.now()
+  if now.weekday() == 0 and now.hour == 7:
+    r = requests.get("https://dev.to/api/articles?page=1&per_page=3&top=7%22")
+
+    for post in r.json():
+        title = post['title']
+        excerpt = post['description']
+        author = post['user']['username']
+        tags = post['tags']
+        url = post['url']
+        cover = post['cover_image']
+        reactions = post['public_reactions_count']
+        published_date_string = post['published_at']
+        published_date_object = datetime.strptime(published_date_string, "%Y-%m-%dT%H:%M:%SZ")
+        published_date = published_date_object.strftime("%b %d %Y")
+        embed_color = 0x5865F2
+        embed = discord.Embed(title=title, url=url, color=discord.Color(embed_color))
+        embed.set_image(url=cover)
+        embed.add_field(name="__Excerpt__", value=f"```{excerpt}```", inline=False)
+        embed.add_field(name="__Author__", value=author, inline=False)
+        embed.add_field(name="__Tags__", value=tags, inline=False)
+        embed.set_footer(text=f"❤️ {reactions} Reactions · Published on {published_date}")
+        tech_news_channel = client.get_channel(tech_news_channel_id)
+        await tech_news_channel.send(embed=embed)
 
 def get_config(category:str, key:str):
   value = int(config.get(category, key))
@@ -117,6 +145,7 @@ And if you ever feel lost and need help navigating the server do check out <#{se
 async def on_ready():
   print(f"Logged in as {client.user}")
   post_hn_daily.start()
+  post_tech_news.start()
 
 @client.event
 async def on_message(message):
