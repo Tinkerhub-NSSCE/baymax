@@ -1,0 +1,44 @@
+[server]
+ifttt_integration_id = xxxxxxxxxxxxxxxxxx
+home_guild_id = xxxxxxxxxxxxxxxxxx
+member_role_id = xxxxxxxxxxxxxxxxxx
+introductions_channel_id = xxxxxxxxxxxxxxxxxx
+server_guide_channel_id = xxxxxxxxxxxxxxxxxx
+incoming_channel_id = xxxxxxxxxxxxxxxxxx
+bot_name = Baymax
+user_dms_channel_id = xxxxxxxxxxxxxxxxxx
+tech_news_channel_id = xxxxxxxxxxxxxxxxxx
+hn_daily_channel_id = xxxxxxxxxxxxxxxxxx
+
+[college_roles]
+nsscian = xxxxxxxxxxxxxxxxxx
+non_nsscian = xxxxxxxxxxxxxxxxxx
+
+[gender_roles]
+male = xxxxxxxxxxxxxxxxxx
+female = xxxxxxxxxxxxxxxxxx
+non_binary = xxxxxxxxxxxxxxxxxx
+
+[year_roles]
+2k15 = xxxxxxxxxxxxxxxxxx
+2k16 = xxxxxxxxxxxxxxxxxx
+2k17 = xxxxxxxxxxxxxxxxxx
+2k18 = xxxxxxxxxxxxxxxxxx
+2k19 = xxxxxxxxxxxxxxxxxx
+2k20 = xxxxxxxxxxxxxxxxxx
+2k21 = xxxxxxxxxxxxxxxxxx
+2k22 = xxxxxxxxxxxxxxxxxx
+2k23 = xxxxxxxxxxxxxxxxxx
+2k24 = xxxxxxxxxxxxxxxxxx
+2k25 = xxxxxxxxxxxxxxxxxx
+2k26 = xxxxxxxxxxxxxxxxxx
+2k27 = xxxxxxxxxxxxxxxxxx
+
+
+[airtable]
+api_key = keyxxxxxxxxxxxxxx
+base_id = appxxxxxxxxxxxxxx
+table_name = xxxxxxxxxxxxxx
+
+[dialogflow]
+project_id = xxxxxx-xxxx
