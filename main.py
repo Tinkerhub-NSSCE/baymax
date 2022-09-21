@@ -13,15 +13,6 @@ from airtable_api import *
 from generate_cards import *
 from dialogflow_api import *
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-
-load_dotenv()
-TOKEN = os.getenv('TOKEN')
-directory = os.path.dirname(os.path.realpath(__file__))
-client = commands.Bot(command_prefix='!', intents=intents)
-
 config = configparser.ConfigParser()
 config.read(f"{directory}/config.ini")
 integration_id = int(config.get("server", "ifttt_integration_id"))
@@ -35,6 +26,15 @@ guild_name = str(config.get("server","guild_name"))
 user_dms_channel_id = int(config.get("server","user_dms_channel_id"))
 tech_news_channel_id = int(config.get("server","tech_news_channel_id"))
 hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
+
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+
+load_dotenv()
+TOKEN = os.getenv('TOKEN')
+directory = os.path.dirname(os.path.realpath(__file__))
+client = commands.Bot(command_prefix='!', intents=intents)
 
 @tasks.loop(minutes=60.0)
 async def post_hn_daily():
@@ -252,7 +252,7 @@ async def on_member_join(member):
   else:
     try:
       embed_colour = 0x2f3136
-      embed = discord.Embed(description=f'''**` Step 1 `** Fill and submit the onboarding form: https://tally.so/r/3xX1aE
+      embed = discord.Embed(description=f'''**` Step 1 `** Fill and submit the onboarding form: https://bit.ly/Join-THNSSCE
 
 **` Step 2 `** Accept the rules in the **Steps to complete** dialog box (The blue box you see when you click on the server)
 
@@ -266,5 +266,19 @@ To gain access to all the channels on our server, you need to complete a few ste
     except Exception as e:
       print(f"Error sending DM to {str(member)}")
 
+@client.command()
+@commands.has_any_role("admin")
+async def send_message(ctx, text:str, channel_id:int):
+  '''Send a custom message to a specific channel'''
+  destination_channel = client.get_channel(channel_id)
+  try:
+    await destination_channel.send(text)
+  except Exception as e:
+    print("Error sending custom message")
+
+@send_message.error
+async def send_message_error(ctx, error):
+  if isinstance(error, commands.MissingAnyRole):
+    await ctx.send("Welp.. seems like you don't have the right permission to do that.", delete_after=10)
 
 client.run(TOKEN)
