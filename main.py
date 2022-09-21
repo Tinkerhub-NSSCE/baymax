@@ -256,7 +256,7 @@ async def on_member_join(member):
 
 **` Step 2 `** Accept the rules in the **Steps to complete** dialog box (The blue box you see when you click on the server)
 
-**` Step 3 `** Give a brief intoduction of yourself in <#{introductions_channel_id}> 
+**` Step 3 `** Give a brief introduction of yourself in <#{introductions_channel_id}> 
 ''', color=discord.Colour(embed_colour))
       await member.send(f'''Hiya **{member.display_name}**, we're excited to have you here 👀
 To gain access to all the channels on our server, you need to complete a few steps 👇
