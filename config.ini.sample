@@ -6,6 +6,7 @@ introductions_channel_id = xxxxxxxxxxxxxxxxxx
 server_guide_channel_id = xxxxxxxxxxxxxxxxxx
 incoming_channel_id = xxxxxxxxxxxxxxxxxx
 bot_name = Baymax
+guild_name = TinkerHub NSSCE
 user_dms_channel_id = xxxxxxxxxxxxxxxxxx
 tech_news_channel_id = xxxxxxxxxxxxxxxxxx
 hn_daily_channel_id = xxxxxxxxxxxxxxxxxx

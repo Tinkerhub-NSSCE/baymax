@@ -47,6 +47,3 @@ def generate_greeting(avatar_url:str, name:str):
     background.save(out, format='PNG')
 
     return out
-
-# url = "https://cdn.discordapp.com/avatars/931826368495378433/3be13fca53099bc0a528b3d3a0cfc3b3.png?size=256"
-# generate_greeting(url, "Aravind Subhramanian")

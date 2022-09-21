@@ -31,6 +31,7 @@ introductions_channel_id = int(config.get("server","introductions_channel_id"))
 server_guide_channel_id = int(config.get("server","server_guide_channel_id"))
 incoming_channel_id = int(config.get("server","incoming_channel_id"))
 bot_name = str(config.get("server","bot_name"))
+guild_name = str(config.get("server","guild_name"))
 user_dms_channel_id = int(config.get("server","user_dms_channel_id"))
 tech_news_channel_id = int(config.get("server","tech_news_channel_id"))
 hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
@@ -143,7 +144,11 @@ And if you ever feel lost and need help navigating the server do check out <#{se
 
 @client.event
 async def on_ready():
-  print(f"Logged in as {client.user}")
+  for guild in client.guilds:
+    if guild.name == guild_name:
+      break
+
+  print(f"{client.user} is online and connected to {guild.name}(id: {guild.id})")
   post_hn_daily.start()
   post_tech_news.start()
 
@@ -259,7 +264,6 @@ To gain access to all the channels on our server, you need to complete a few ste
 ''', embed=embed)
       await member.send(f'And in case you need any assistance, just ping us at <#977854608804307005>')
     except Exception as e:
-      print(e)
       print(f"Error sending DM to {str(member)}")
 
 
