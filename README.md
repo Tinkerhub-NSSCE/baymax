@@ -11,7 +11,7 @@
   <a href="#"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FTinkerhub-NSSCE%2Fbaymax&count_bg=%235865F2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com"></a>
 </p>
 
-**Baymax** is the official Discord bot of TinkerHub NSSCE's, designed to manage the server effectively and efficiently while also keeping it lively by engaging in natural conversations with users.
+**Baymax** is the official Discord bot of TinkerHub NSSCE, designed to manage the server effectively and efficiently while also keeping it lively by engaging in natural conversations with users.
 
 ## Overview
 Baymax was developed in an effort to automate and streamline the onboarding process to TinkerHub NSSCE's discord server providing the members an easier and quicker way to get themselves verified and gain complete access to the server. But it doesn't stop there, Baymax is capable of much more🔮
