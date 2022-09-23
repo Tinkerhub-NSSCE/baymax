@@ -6,6 +6,7 @@ import random
 import feedparser
 import xmltodict
 import requests
+import pytz
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
@@ -36,9 +37,16 @@ TOKEN = os.getenv('TOKEN')
 directory = os.path.dirname(os.path.realpath(__file__))
 client = commands.Bot(command_prefix='!', intents=intents)
 
+local_tz = pytz.timezone('Asia/Calcutta')
+
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt)
+
 @tasks.loop(minutes=60.0)
 async def post_hn_daily():
-  now = datetime.now()
+  now = datetime.utcnow()
+  now = utc_to_local(now)
   if now.hour == 7:
     NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
     xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
@@ -65,7 +73,8 @@ async def post_hn_daily():
 
 @tasks.loop(minutes=60.0)
 async def post_tech_news():
-  now = datetime.now()
+  now = datetime.utcnow()
+  now = utc_to_local(now)
   if now.weekday() == 0 and now.hour == 7:
     r = requests.get("https://dev.to/api/articles?page=1&per_page=3&top=7%22")
 
@@ -207,8 +216,9 @@ async def on_message(message):
     author_name = message.author.display_name
     icon_url = message.author.avatar.replace(format='png', size=256)
     msg_content = message.content
-    now = datetime.now()
-    time_stamp = (now.strftime("%a %b %d %Y"), now.strftime("%I:%M:%S"))
+    now = datetime.utcnow()
+    now = utc_to_local(now)
+    time_stamp = (now.strftime("%a %b %d %Y"), now.strftime("%I:%M:%S %p"))
     embed_color = 0x5865F2
     embed = discord.Embed(description=f'''**Discord ID:**  <@{author_id}>
 **Message:**  {msg_content}''', color=discord.Colour(embed_color))
