@@ -12,7 +12,7 @@ KEY_PATH = "./dialogflow_api.json"
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=KEY_PATH
 
-def send_message_diagflow(input_text:str):
+def send_message_dialogflow(input_text:str):
     session_client = dialogflow.SessionsClient()
     session = session_client.session_path(PROJECT_ID, SESSION_ID)
 

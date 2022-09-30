@@ -39,65 +39,79 @@ client = commands.Bot(command_prefix='!', intents=intents)
 
 local_tz = pytz.timezone('Asia/Calcutta')
 
-def utc_to_local(utc_dt):
-    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    return local_tz.normalize(local_dt)
+def utc_to_local(utc_dt:datetime):
+  local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+  return local_tz.normalize(local_dt)
 
-@tasks.loop(minutes=60.0)
+def loggable_dt(dt:datetime):
+  format_string = "%m-%d-%Y | %I:%M:%S %p"
+  lg_dt = dt.strftime(format_string)
+  return lg_dt
+
+@tasks.loop(minutes=60.0, reconnect=True)
 async def post_hn_daily():
   now = datetime.utcnow()
   now = utc_to_local(now)
+  hn_daily_channel = client.get_channel(hn_daily_channel_id)
+  history = [m async for m in hn_daily_channel.history(limit = 1)]
+  last_posted_at = history[1].created_at
+  last_posted_at = utc_to_local(last_posted_at)
   if now.hour == 7:
-    NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
-    xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
-    data = xmltodict.parse(xmldata)
-    
-    hn_daily_channel = client.get_channel(hn_daily_channel_id)
-    history = [m async for m in hn_daily_channel.history(limit = 1)]
-    for m in history:
+    if last_posted_at.date() != now.date():
+      NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
+      xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
+      data = xmltodict.parse(xmldata)
+      
+      for m in history:
           try:
               await m.delete()
           except:
               pass
 
-    embed_text = ""
-    for i in range(10):
-      url = data['root']['ul'][0]['li'][i]['span'][0]['a']['@href']
-      text = data['root']['ul'][0]['li'][i]['span'][0]['a']['#text'].replace("\\","")
-      embed_text += f"***[{i+1}. {text}]({url})***\n\n"
+      embed_text = ""
+      for i in range(10):
+        url = data['root']['ul'][0]['li'][i]['span'][0]['a']['@href']
+        text = data['root']['ul'][0]['li'][i]['span'][0]['a']['#text'].replace("\\","")
+        embed_text += f"***[{i+1}. {text}]({url})***\n\n"
 
-    time_stamp = now.strftime("%b %d %Y")
-    embed_color = 0x5865F2
-    embed = discord.Embed(title=f"Top 10 HackerNews | {time_stamp}", description=embed_text, color=discord.Color(embed_color))
-    await hn_daily_channel.send(embed=embed)
+      time_stamp = now.strftime("%b %d %Y")
+      embed_color = 0x5865F2
+      embed = discord.Embed(title=f"Top 10 HackerNews | {time_stamp}", description=embed_text, color=discord.Color(embed_color))
+      await hn_daily_channel.send(embed=embed)
+      print(f"Posted hn-daily at {loggable_dt(now)}")
 
-@tasks.loop(minutes=60.0)
+@tasks.loop(minutes=60.0, reconnect=True)
 async def post_tech_news():
   now = datetime.utcnow()
   now = utc_to_local(now)
+  tech_news_channel = client.get_channel(tech_news_channel_id)
+  history = [m async for m in tech_news_channel.history(limit = 1)]
+  last_posted_at = history[1].created_at
+  last_posted_at = utc_to_local(last_posted_at)
   if now.weekday() == 0 and now.hour == 7:
-    r = requests.get("https://dev.to/api/articles?page=1&per_page=3&top=7%22")
+    if last_posted_at.date() != now.date():
+      r = requests.get("https://dev.to/api/articles?page=1&per_page=3&top=7%22")
 
-    for post in r.json():
-        title = post['title']
-        excerpt = post['description']
-        author = post['user']['username']
-        tags = post['tags']
-        url = post['url']
-        cover = post['cover_image']
-        reactions = post['public_reactions_count']
-        published_date_string = post['published_at']
-        published_date_object = datetime.strptime(published_date_string, "%Y-%m-%dT%H:%M:%SZ")
-        published_date = published_date_object.strftime("%b %d %Y")
-        embed_color = 0x5865F2
-        embed = discord.Embed(title=title, url=url, color=discord.Color(embed_color))
-        embed.set_image(url=cover)
-        embed.add_field(name="__Excerpt__", value=f"```{excerpt}```", inline=False)
-        embed.add_field(name="__Author__", value=author, inline=False)
-        embed.add_field(name="__Tags__", value=tags, inline=False)
-        embed.set_footer(text=f"❤️ {reactions} Reactions · Published on {published_date}")
-        tech_news_channel = client.get_channel(tech_news_channel_id)
-        await tech_news_channel.send(embed=embed)
+      for post in r.json():
+          title = post['title']
+          excerpt = post['description']
+          author = post['user']['username']
+          tags = post['tags']
+          url = post['url']
+          cover = post['cover_image']
+          reactions = post['public_reactions_count']
+          published_date_string = post['published_at']
+          published_date_object = datetime.strptime(published_date_string, "%Y-%m-%dT%H:%M:%SZ")
+          published_date = published_date_object.strftime("%b %d %Y")
+          embed_color = 0x5865F2
+          embed = discord.Embed(title=title, url=url, color=discord.Color(embed_color))
+          embed.set_image(url=cover)
+          embed.add_field(name="__Excerpt__", value=f"```{excerpt}```", inline=False)
+          embed.add_field(name="__Author__", value=author, inline=False)
+          embed.add_field(name="__Tags__", value=tags, inline=False)
+          embed.set_footer(text=f"❤️ {reactions} Reactions · Published on {published_date}")
+          await tech_news_channel.send(embed=embed)
+          print(f"Posted tech-news at {loggable_dt(now)}")
 
 def get_config(category:str, key:str):
   value = int(config.get(category, key))
@@ -162,6 +176,11 @@ async def on_ready():
   post_tech_news.start()
 
 @client.event
+async def on_resumed():
+  post_hn_daily.restart()
+  post_tech_news.restart()
+
+@client.event
 async def on_message(message):
   await client.process_commands(message)
   if message.author == client.user:
@@ -207,7 +226,7 @@ async def on_message(message):
     if len(content) < 2:
       res = random.choice(["👀","How can I help you?","I'm here..","Yepp"])
     else:
-      dialogflow_res = send_message_diagflow(message.content)
+      dialogflow_res = send_message_dialogflow(message.content)
       res = dialogflow_res["response"]
     await message.channel.send(res)
 
