@@ -44,7 +44,7 @@ def utc_to_local(utc_dt:datetime):
   return local_tz.normalize(local_dt)
 
 def loggable_dt(dt:datetime):
-  format_string = "%m-%d-%Y | %I:%M:%S %p"
+  format_string = "%d-%m-%Y | %I:%M:%S %p"
   lg_dt = dt.strftime(format_string)
   return lg_dt
 
