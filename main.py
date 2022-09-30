@@ -54,7 +54,7 @@ async def post_hn_daily():
   now = utc_to_local(now)
   hn_daily_channel = client.get_channel(hn_daily_channel_id)
   history = [m async for m in hn_daily_channel.history(limit = 1)]
-  last_posted_at = history[1].created_at
+  last_posted_at = history[0].created_at
   last_posted_at = utc_to_local(last_posted_at)
   if now.hour == 7:
     if last_posted_at.date() != now.date():
@@ -86,7 +86,7 @@ async def post_tech_news():
   now = utc_to_local(now)
   tech_news_channel = client.get_channel(tech_news_channel_id)
   history = [m async for m in tech_news_channel.history(limit = 1)]
-  last_posted_at = history[1].created_at
+  last_posted_at = history[0].created_at
   last_posted_at = utc_to_local(last_posted_at)
   if now.weekday() == 0 and now.hour == 7:
     if last_posted_at.date() != now.date():
