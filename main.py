@@ -156,13 +156,14 @@ And if you ever feel lost and need help navigating the server do check out <#{se
     return e
 
   try:
-    avatar_url = member.avatar.replace(format='png', size=256)
+    avatar_url = member.display_avatar.replace(format='png', size=256).url
     card = generate_greeting(avatar_url, name)
     card.seek(0)
     channel = client.get_channel(channel_id)
     await channel.send(file=discord.File(card, filename='greet.png'))
   except Exception as e:
-    print(f"Error posting in {channel}")
+    channel = client.get_channel(channel_id)
+    print(f"Error posting welcome card in {channel}")
     return e
 
 @client.event
@@ -233,7 +234,7 @@ async def on_message(message):
   elif message.channel.type is discord.ChannelType.private:
     author_id = message.author.id
     author_name = message.author.display_name
-    icon_url = message.author.avatar.replace(format='png', size=256)
+    icon_url = message.author.display_avatar.replace(format='png', size=256).url
     msg_content = message.content
     now = datetime.utcnow()
     now = utc_to_local(now)

@@ -10,7 +10,7 @@ def generate_greeting(avatar_url:str, name:str):
     avatar = BytesIO(requests.get(avatar_url).content)
     bg_image_path = f'{directory}/cards/welcome_card.png'
 
-    im = Image.open(avatar)
+    im = Image.open(avatar).convert('RGBA')
     im = im.resize((163,163))
 
     font_name = 'Gilroy-SemiBold.ttf'
