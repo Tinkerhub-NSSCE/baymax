@@ -89,5 +89,7 @@ You can find all the required dependencies in the `requirements.txt` file. Howev
 - [pillow](https://pillow.readthedocs.io/en/stable/)
 
 ## Contributing
-Do you have any thoughts on improving the bot? Ideas, design changes, code cleaning or even major codebase revamps, any and all such contributions are always welcome. Baymax just keeps getting better with each contribution, no matter how big or small 💪. If you'd like to get involved, you can start with the issues listed [here](https://github.com/Tinkerhub-NSSCE/baymax/issues) or you can create your own issue [here](https://github.com/Tinkerhub-NSSCE/baymax/issues/new/choose) 
+> 💡 You can refer to our [contributing guide](https://github.com/Tinkerhub-NSSCE/baymax/blob/main/CONTRIBUTING.md) to get started with making contributions
+
+Do you have any thoughts on improving the bot? Ideas, design changes, code cleaning or even major codebase revamps, any and all such contributions are always welcome. Baymax just keeps getting better with each contribution, no matter how big or small 💪. If you'd like to get involved, you can start with the issues listed in our [issue tracker](https://github.com/Tinkerhub-NSSCE/baymax/issues) or you can create your own issue [here](https://github.com/Tinkerhub-NSSCE/baymax/issues/new/choose) <br>
 
