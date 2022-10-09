@@ -5,13 +5,9 @@
 </p>
 
 <p align="center">
-  The bot you were looking for for your discord server
-  <br />
-  <a href="https://github.com/Tinkerhub-NSSCE/baymax"><strong>Explore the documents »</strong></a>
+  Official Discord bot of TinkerHub NSSCE
   <br />
   <br />
-  <a href="https://github.com/Tinkerhub-NSSCE/baymax">See demo</a>
-    ·
   <a href="https://github.com/Tinkerhub-NSSCE/baymax/issues/new?assignees=&labels=feature&template=bug_report.md&title=">Report a Bug</a>
     ·
   <a href="https://github.com/Tinkerhub-NSSCE/baymax/issues/new?assignees=&labels=feature&template=feature_request.md&title=">Request feature</a>
