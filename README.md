@@ -5,6 +5,19 @@
 </p>
 
 <p align="center">
+  The bot you were looking for for your discord server
+  <br />
+  <a href="https://github.com/Tinkerhub-NSSCE/baymax"><strong>Explore the documents »</strong></a>
+  <br />
+  <br />
+  <a href="https://github.com/Tinkerhub-NSSCE/baymax">See demo</a>
+    ·
+  <a href="https://github.com/Tinkerhub-NSSCE/baymax/issues/new?assignees=&labels=feature&template=bug_report.md&title=">Report a Bug</a>
+    ·
+  <a href="https://github.com/Tinkerhub-NSSCE/baymax/issues/new?assignees=&labels=feature&template=feature_request.md&title=">Request feature</a>
+</p>
+
+<p align="center">
   <a href="https://discordpy.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/Code-Discord.py-informational?style=plastic&logo=python&logoColor=white&color=5865F2"></a>
   <a href="https://discordpy.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/NLP-Dialogflow-informational?style=plastic&logo=dialogflow&logoColor=white&color=5865F2"></a>
   <a href="https://github.com/Tinkerhub-NSSCE/baymax/archive/refs/heads/main.zip"><img src="https://img.shields.io/badge/Source-Download-informational?style=flat&logo=download&logoColor=white&color=5865F2"></a>
