@@ -7,6 +7,7 @@ import feedparser
 import xmltodict
 import requests
 import pytz
+import logging
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
@@ -36,6 +37,21 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 directory = os.path.dirname(os.path.realpath(__file__))
 client = commands.Bot(command_prefix='!', intents=intents)
+
+# setup logging
+log_format = logging.Formatter('%(asctime)s %(levelname)s   %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+discord_handler = logging.FileHandler(filename='baymax.log')
+discord.utils.setup_logging(handler=discord_handler, formatter=log_format, root=False)
+
+baymax_handler = logging.FileHandler(filename='baymax.log')
+baymax_stream_handler = logging.StreamHandler()
+baymax_handler.setFormatter(log_format)
+baymax_stream_handler.setFormatter(log_format)
+baymax_logger = logging.getLogger(__name__)
+baymax_logger.addHandler(baymax_handler)
+baymax_logger.addHandler(baymax_stream_handler)
+baymax_logger.setLevel(logging.INFO)
 
 local_tz = pytz.timezone('Asia/Calcutta')
 
@@ -78,7 +94,7 @@ async def post_hn_daily():
       embed_color = 0x5865F2
       embed = discord.Embed(title=f"Top 10 HackerNews | {time_stamp}", description=embed_text, color=discord.Color(embed_color))
       await hn_daily_channel.send(embed=embed)
-      print(f"Posted hn-daily at {loggable_dt(now)}")
+      baymax_logger.info(f"Posted hn-daily at {loggable_dt(now)}")
 
 @tasks.loop(minutes=60.0, reconnect=True)
 async def post_tech_news():
@@ -111,7 +127,7 @@ async def post_tech_news():
           embed.add_field(name="__Tags__", value=tags, inline=False)
           embed.set_footer(text=f"❤️ {reactions} Reactions · Published on {published_date}")
           await tech_news_channel.send(embed=embed)
-          print(f"Posted tech-news at {loggable_dt(now)}")
+          baymax_logger.info(f"Posted tech-news at {loggable_dt(now)}")
 
 def get_config(category:str, key:str):
   value = int(config.get(category, key))
@@ -152,7 +168,7 @@ So where you headed to next? Just make sure you give a brief introduction of you
 
 And if you ever feel lost and need help navigating the server do check out <#{server_guide_channel_id}>''')
   except Exception as e:
-    print(f"Error sending DM to {str(member)}")
+    baymax_logger.error(f"Error sending DM to {str(member)}")
     return e
 
   try:
@@ -163,7 +179,7 @@ And if you ever feel lost and need help navigating the server do check out <#{se
     await channel.send(file=discord.File(card, filename='greet.png'))
   except Exception as e:
     channel = client.get_channel(channel_id)
-    print(f"Error posting welcome card in {channel}")
+    baymax_logger.error(f"Error posting welcome card in {channel}")
     return e
 
 @client.event
@@ -172,7 +188,7 @@ async def on_ready():
     if guild.name == guild_name:
       break
 
-  print(f"{client.user} is online and connected to {guild.name}(id: {guild.id})")
+  baymax_logger.info(f"{client.user} is online and connected to {guild.name}(id: {guild.id})")
   post_hn_daily.start()
   post_tech_news.start()
 
@@ -202,7 +218,7 @@ async def on_message(message):
         try:
           member_data = get_member_data(username)
         except Exception as e:
-          print(f"Error fetching user {username} from airtable")
+          baymax_logger.error(f"Error fetching user {username} from airtable")
         if member_data != None:
           if 'snowflake_id' not in member_data['fields'].keys():
             delete_last_record(username)
@@ -217,7 +233,7 @@ async def on_message(message):
         delete_duplicate_records(username)
         update_discord_id(str(discord_id), record_id)
         await greet_member(member, nickname, incoming_channel_id)
-        print(f"{str(member)} has succesfully onboarded")
+        baymax_logger.info(f"{str(member)} has succesfully onboarded")
     else:
       pass
   
@@ -256,7 +272,7 @@ async def on_member_join(member):
   try:
     member_data = get_member_data(username)
   except Exception as e:
-    print(f"Error fetching user {username} from airtable")
+    baymax_logger.error(f"Error fetching user {username} from airtable")
   
   if member_data != None:
     nickname = member_data['fields']['name']
@@ -269,7 +285,7 @@ async def on_member_join(member):
     if 'snowflake_id' in member_data['fields'].keys():
       await member.add_roles(member_role, college_role, gender_role, year_role)
       await member.edit(nick=f"{nickname} 🎓")
-      print(f"{str(member)} has succesfully rejoined")
+      baymax_logger.info(f"{str(member)} has succesfully rejoined")
     else:
       await member.add_roles(member_role, college_role, gender_role, year_role)
       await member.edit(nick=f"{nickname} 🎓")
@@ -278,7 +294,7 @@ async def on_member_join(member):
       delete_duplicate_records(username)
       update_discord_id(str(discord_id), record_id)
       await greet_member(member, nickname, incoming_channel_id)
-      print(f"{str(member)} has succesfully onboarded")
+      baymax_logger.info(f"{str(member)} has succesfully onboarded")
   else:
     try:
       embed_colour = 0x2f3136
@@ -294,7 +310,7 @@ To gain access to all the channels on our server, you need to complete a few ste
 ''', embed=embed)
       await member.send(f'And in case you need any assistance, just ping us at <#977854608804307005>')
     except Exception as e:
-      print(f"Error sending DM to {str(member)}")
+      baymax_logger.error(f"Error sending DM to {str(member)}")
 
 @client.command()
 @commands.has_any_role("admin")
@@ -304,7 +320,7 @@ async def send_message(ctx, text:str, channel_id:int):
   try:
     await destination_channel.send(text)
   except Exception as e:
-    print("Error sending custom message")
+    baymax_logger.error("Error sending custom message")
 
 @send_message.error
 async def send_message_error(ctx, error):
