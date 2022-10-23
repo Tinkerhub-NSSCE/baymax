@@ -192,6 +192,8 @@ async def on_ready():
   post_hn_daily.start()
   post_tech_news.start()
 
+  await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for new members'))
+
 @client.event
 async def on_resumed():
   post_hn_daily.restart()
