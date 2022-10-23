@@ -4,3 +4,4 @@ venv/
 __pycache__/
 config.ini
 dialogflow_api.json
+baymax.log
