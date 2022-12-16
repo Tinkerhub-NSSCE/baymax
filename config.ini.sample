@@ -10,6 +10,11 @@ guild_name = TinkerHub NSSCE
 user_dms_channel_id = xxxxxxxxxxxxxxxxxx
 tech_news_channel_id = xxxxxxxxxxxxxxxxxx
 hn_daily_channel_id = xxxxxxxxxxxxxxxxxx
+moderator_ids = ["xxxxxxxxxxxxxxxxxx"]
+intro_keywords = ["xxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxxxx"]
+intro_react_emoji_id = xxxxxxxxxxxxxxxxxx
+intro_react_emoji_name = xxxxxxxxxxxxxxxxxx
+onboard_request_msg = ["xxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxxxx"]
 
 [college_roles]
 nsscian = xxxxxxxxxxxxxxxxxx
@@ -43,3 +48,6 @@ table_name = xxxxxxxxxxxxxx
 
 [dialogflow]
 project_id = xxxxxx-xxxx
+
+[stackapi]
+api_key = xxxxxxxxxxxxxxxxxx

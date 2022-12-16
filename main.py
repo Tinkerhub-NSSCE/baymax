@@ -14,6 +14,7 @@ from datetime import datetime
 from airtable_api import *
 from generate_cards import *
 from dialogflow_api import *
+from stackoverflow_api import *
 
 config = configparser.ConfigParser()
 config.read(f"{directory}/config.ini")
@@ -28,6 +29,11 @@ guild_name = str(config.get("server","guild_name"))
 user_dms_channel_id = int(config.get("server","user_dms_channel_id"))
 tech_news_channel_id = int(config.get("server","tech_news_channel_id"))
 hn_daily_channel_id = int(config.get("server","hn_daily_channel_id"))
+moderator_ids = json.loads(config.get("server","moderator_ids"))
+intro_keywords = json.loads(config.get("server","intro_keywords"))
+intro_react_emoji_id = int(config.get("server","intro_react_emoji_id"))
+intro_react_emoji_name = str(config.get("server","intro_react_emoji_name"))
+onboard_request_msg = json.loads(config.get("server","onboard_request_msg"))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -266,6 +272,16 @@ async def on_message(message):
     await message.author.send("My programming limits me from having conversations in a private channel. However I've forwaded your message to the server admins so that they can give you a swift response!")
     await user_dms_channel.send(embed=embed)
 
+  elif message.channel.id == introductions_channel_id:
+    if str(message.author.id) not in moderator_ids:
+      if set(intro_keywords).intersection(message.content.lower().split()):
+        await message.add_reaction(f"<:{intro_react_emoji_name}:{intro_react_emoji_id}>")
+        guild = client.get_guild(home_guild_id)
+        member_role = guild.get_role(member_role_id)
+        if member_role not in message.author.roles:
+          reply_content = random.choice(onboard_request_msg)
+          await message.reply(reply_content.format(discord_id=f"<@{message.author.id}>"))        
+
 @client.event
 async def on_member_join(member):
   guild = client.get_guild(home_guild_id)
@@ -315,6 +331,39 @@ To gain access to all the channels on our server, you need to complete a few ste
       baymax_logger.error(f"Error sending DM to {str(member)}")
 
 @client.command()
+async def sso(ctx, query:str):
+  '''Use stackoverflow right within discord'''
+  res = fetch_res(query)
+  embed_text = ""
+  number = 0
+  for response in res:
+      title = response['title']
+      url = response['url']
+      number += 1
+      embed_text += f"***Title:*** *{title}*\n ***URL:*** *{url}*\n\n"
+  embed = discord.Embed(title="Here are the the top 5 matching results", description=embed_text, color=discord.Color.blurple())
+  embed.set_footer(text=f"🔍 Search query: {query}")
+  await ctx.channel.send(embed=embed)
+
+@client.command()
+async def lmddgtfy(ctx, query:str):
+  '''Let me DuckDuckGo that for ya!'''
+  query = query.replace(" ", "%20")
+  url = f"https://lmddgtfy.net/?q={query}"
+  await ctx.message.reply(url)
+
+@client.command()
+@commands.has_any_role("admin")
+async def send_reply(ctx, text:str, message_id:int):
+  '''Send a custom reply to a specific essage'''
+  target_message = await ctx.fetch_message(message_id)
+  try:
+    await target_message.reply(text)
+    await ctx.message.delete()
+  except Exception as e:
+    baymax_logger.error("Error replying with custom message")
+
+@client.command()
 @commands.has_any_role("admin")
 async def send_message(ctx, text:str, channel_id:int):
   '''Send a custom message to a specific channel'''
@@ -323,6 +372,11 @@ async def send_message(ctx, text:str, channel_id:int):
     await destination_channel.send(text)
   except Exception as e:
     baymax_logger.error("Error sending custom message")
+
+@send_reply.error
+async def send_reply_error(ctx, error):
+  if isinstance(error, commands.MissingAnyRole):
+    await ctx.send("Welp.. seems like you don't have the right permission to do that.", delete_after=10)
 
 @send_message.error
 async def send_message_error(ctx, error):
