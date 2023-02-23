@@ -81,7 +81,7 @@ async def post_hn_daily():
   if now.hour == 7:
     if last_posted_at.date() != now.date():
       NewsFeed = feedparser.parse("https://www.daemonology.net/hn-daily/index.rss")
-      xmldata = '<root>' + str(NewsFeed.entries) + '</root>'
+      xmldata = '<root>' + str(NewsFeed.entries[0]) + '</root>'
       data = xmltodict.parse(xmldata)
       
       for m in history:
