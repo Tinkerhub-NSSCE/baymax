@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  Official Discord bot of TinkerHub NSSCE
+  The official discord bot of TinkerHub NSSCE
   <br />
   <br />
   <a href="https://github.com/Tinkerhub-NSSCE/baymax/issues/new?assignees=&labels=feature&template=bug_report.md&title=">Report a Bug</a>
@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="https://discordpy.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/Code-Discord.py-informational?style=plastic&logo=python&logoColor=white&color=5865F2"></a>
-  <a href="https://discordpy.readthedocs.io/en/stable/"><img src="https://img.shields.io/badge/NLP-Dialogflow-informational?style=plastic&logo=dialogflow&logoColor=white&color=5865F2"></a>
+  <a href="https://dialogflow.cloud.google.com/"><img src="https://img.shields.io/badge/NLP-Dialogflow-informational?style=plastic&logo=dialogflow&logoColor=white&color=5865F2"></a>
   <a href="https://github.com/Tinkerhub-NSSCE/baymax/archive/refs/heads/main.zip"><img src="https://img.shields.io/badge/Source-Download-informational?style=flat&logo=download&logoColor=white&color=5865F2"></a>
   <a href="#"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FTinkerhub-NSSCE%2Fbaymax&count_bg=%235865F2&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com"></a>
 </p>
@@ -100,5 +100,5 @@ You can find all the required dependencies in the `requirements.txt` file. Howev
 ## Contributing
 > 💡 You can refer to our [contributing guide](https://github.com/Tinkerhub-NSSCE/baymax/blob/main/CONTRIBUTING.md) to get started with making contributions
 
-Do you have any thoughts on improving the bot? Ideas, design changes, code cleaning or even major codebase revamps, any and all such contributions are always welcome. Baymax just keeps getting better with each contribution, no matter how big or small 💪. If you'd like to get involved, you can start with the issues listed in our [issue tracker](https://github.com/Tinkerhub-NSSCE/baymax/issues) or you can create your own issue [here](https://github.com/Tinkerhub-NSSCE/baymax/issues/new/choose) <br>
+Do you have any thoughts on improving the bot? Ideas, design changes, code cleaning or even major codebase revamps, any and all such contributions are always welcome. Baymax just keeps getting better with each contribution, no matter how big or small 💪. If you'd like to get involved, you can start with the issues listed in our [issue tracker](https://github.com/Tinkerhub-NSSCE/baymax/issues) or you can create your own issue [here](https://github.com/Tinkerhub-NSSCE/baymax/issues/new/choose). <br>
 
